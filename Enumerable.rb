@@ -57,24 +57,43 @@ module Enumerable
 		end
 		count
 	end
-	def my_map
-		new_array = []
-		if block_given?
-			self.my_each{|i| new_array << yield(i)}
-			return new_array
-		else return self
-		end
+	def my_map(code_block)
+    new_array = []
+    if code_block
+      my_each do |i|
+        new_array << code_block.call(i)
+      end
+      return new_array
+    else
+      return self
+    end
+  end
+	def my_inject(x = 1)
+		count = x.nil? ? first : x
+		my_each {|i| count = yield(count, i)}
+		count
 	end
+
+end
+
+def multiply_els(stuff)
+	stuff.my_inject(1){|things, n| things*n}	
 end
 
 array = [1,2,3,4,5]
 
-temp = array.my_map{|i| i**i}
+temp = array.my_inject(1){|sum, n| sum + n}
 puts"*1*"
 puts temp
 puts
 puts
 
-temp = array.map{|i| i**i}
+temp = array.inject(1){|sum, n| sum + n}
 puts "*2*"
 puts temp 
+
+temp = multiply_els([2,4,5])
+puts 
+puts
+puts
+puts "#=> #{temp}"
